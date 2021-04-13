@@ -1,5 +1,29 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    <h1>TODO</h1>
+<h1>ALL POSTS</h1>
+
+{% if user.is_authenticated %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.post }}
+    <input type="submit" value="go">
+</form>
+
+
+{% endif %}
+<ul>
+    {% for post in posts %}
+    <li>
+        Post: {{ post.post }}
+        User: {{ post.user.username }}
+        Timestamp: {{ post.timestamp }}
+        Likes: {{ post.liked_by.count }}
+    </li>
+    {% endfor %}
+</ul>
+
+
 {% endblock %}
+
+<!-- https://www.pluralsight.com/guides/work-with-ajax-django -->

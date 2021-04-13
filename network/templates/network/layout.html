@@ -1,3 +1,4 @@
+{% load static %}
 {% load sass_tags %}
 
 <!DOCTYPE html>
@@ -9,7 +10,7 @@
     <title>{% block title %}Social Network{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="{% sass_src 'network/css/normalize.css' %}" rel="stylesheet">
+    <link href="{% static 'network/css/normalize.css' %}" rel="stylesheet">
     <link href="{% sass_src 'network/css/styles.scss' %}" rel="stylesheet">
 </head>
 
@@ -48,6 +49,8 @@
         {% block body %}
         {% endblock %}
     </main>
+
+    <script src="{% static 'network/js/script.js' %}"></script>
 </body>
 
 </html>

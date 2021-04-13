@@ -4,12 +4,27 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Post
+from .forms import PostForm
 
 
 def index(request):
-    return render(request, "network/index.html")
 
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            newPost = Post()
+            newPost.post = form.cleaned_data['post']
+            newPost.user = request.user
+            newPost.save()
+
+            return HttpResponseRedirect(reverse('index'))
+
+    else:
+        return render(request, "network/index.html", {
+            'form': PostForm(),
+            'posts': Post.objects.order_by('-timestamp').all()
+        })
 
 def login_view(request):
     if request.method == "POST":
