@@ -11,9 +11,13 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+# *** IMPORT TO MAKE PATH TO STATIC WORK WITH SCSS ***
+from pathlib import Path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# *** CHANGED TO MAKE PATH TO STATIC WORK WITH SCSS ***
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # *** ADDED TO USE SCSS ***
+    'sass_processor',
 ]
 
 MIDDLEWARE = [
@@ -83,6 +89,9 @@ DATABASES = {
 
 AUTH_USER_MODEL = "network.User"
 
+# *** ADDED TO AVOID WARNING DUE TO OLDER VERSION ***
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -121,4 +130,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+# *** ADDED TO MAKE PATH TO STATIC WORK WITH SCSS ***
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
+]
+
+STATIC_ROOT = BASE_DIR / 'static'
+
+SASS_PROCESSOR_ROOT = STATIC_ROOT
