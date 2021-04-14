@@ -16,18 +16,16 @@
 
 <body>
 
-    <nav>
+    <nav class="body-nav">
         <a href="#">Network</a>
         <ul>
             {% if user.is_authenticated %}
             <li>
                 <a href="#"><strong>{{ user.username }}</strong></a>
             </li>
-            {% endif %}
             <li>
                 <a class="nav-link" href="{% url 'index' %}">All Posts</a>
             </li>
-            {% if user.is_authenticated %}
             <li>
                 <a href="#">Following</a>
             </li>
@@ -45,11 +43,12 @@
         </ul>
     </nav>
 
-    <main class="main">
+    <main class="body-content">
         {% block body %}
         {% endblock %}
     </main>
 
+    <script src="https://kit.fontawesome.com/694317dcf2.js" crossorigin="anonymous"></script>
     <script src="{% static 'network/js/script.js' %}"></script>
 </body>
 

@@ -9,20 +9,36 @@
     {{ form.post }}
     <input type="submit" value="go">
 </form>
-
-
 {% endif %}
-<ul id="postlist">
-    {% for post in posts %}
-    <li>
-        Post: {{ post.post }}
-        User: {{ post.user.username }}
-        Timestamp: {{ post.timestamp }}
-        Likes: {{ post.liked_by.count }}
-    </li>
-    {% endfor %}
-</ul>
 
+<section id="postlist" class="posts">
+    {% for post in page_obj %}
+    <article class="post">
+        <div class="post-user">{{ post.user.username }}</div>
+        <div class="post-time">{{ post.timestamp }}</div>
+        <div class="post-message">{{ post.post }}</div>
+        <div class="post-likes"><span class="far fa-heart"></span>{{ post.liked_by.count }}</div>
+    </article>
+    {% endfor %}
+</section>
+
+<nav class="pages">
+    {% if page_obj.has_previous %}
+    <a href="?page=1" class="page page-general">&laquo; first</a>
+    <a href="?page={{ page_obj.previous_page_number }}" class="page page-general">{{ page_obj.previous_page_number}}</a>
+    {% else %}
+    <span aria-hidden="true" class="page page-inactive">&laquo; first</span>
+    {% endif %}
+
+    <span class="page page-current">{{ page_obj.number }}</span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="page page-general">{{ page_obj.next_page_number }}</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}" class="page page-general">last &raquo;</a>
+    {% else %}
+    <span aria-hidden="true" class="page page-inactive">last &raquo;</span>
+    {% endif %}
+</nav>
 
 {% endblock %}
 

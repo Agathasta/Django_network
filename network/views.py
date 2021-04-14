@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -24,9 +25,16 @@ def index(request):
 
     # Display all posts
     else:
+        posts = Post.objects.order_by('-timestamp').all()
+        paginator = Paginator(posts, 10)
+
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
         return render(request, "network/index.html", {
             'form': PostForm(),
-            'posts': Post.objects.order_by('-timestamp').all()
+            'posts': posts,
+            'page_obj': page_obj
         })
 
 
