@@ -26,4 +26,5 @@ class Post(models.Model):
             "user": self.user.username,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
             "liked_by": [user.username for user in self.liked_by.all()],
+            "liked_count": self.liked_by.count()
         }

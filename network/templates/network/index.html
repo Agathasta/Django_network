@@ -4,7 +4,7 @@
 <h1>ALL POSTS</h1>
 
 {% if user.is_authenticated %}
-<form method="post">
+<form id="postform" method="post">
     {% csrf_token %}
     {{ form.post }}
     <input type="submit" value="go">
@@ -12,7 +12,7 @@
 
 
 {% endif %}
-<ul>
+<ul id="postlist">
     {% for post in posts %}
     <li>
         Post: {{ post.post }}

@@ -1,15 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+
 
 from .models import User, Post
 from .forms import PostForm
 
-
 def index(request):
 
+    # Create a new post
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
@@ -17,14 +18,17 @@ def index(request):
             newPost.post = form.cleaned_data['post']
             newPost.user = request.user
             newPost.save()
+            return JsonResponse(newPost.serialize(), safe=False)
+        else:
+            return JsonResponse({"error": form.errors}, status=400)
 
-            return HttpResponseRedirect(reverse('index'))
-
+    # Display all posts
     else:
         return render(request, "network/index.html", {
             'form': PostForm(),
             'posts': Post.objects.order_by('-timestamp').all()
         })
+
 
 def login_view(request):
     if request.method == "POST":
