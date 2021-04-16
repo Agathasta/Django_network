@@ -26,16 +26,31 @@ def index(request):
     # Display all posts
     else:
         posts = Post.objects.order_by('-timestamp').all()
+        
         paginator = Paginator(posts, 10)
-
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
         return render(request, "network/index.html", {
             'form': PostForm(),
-            'posts': posts,
-            'page_obj': page_obj
+            'page_obj': page_obj,
+            'postlist': "all"
         })
+
+def profile(request, user):
+    user = User.objects.filter(username=user).first()
+    posts = user.posts.order_by('-timestamp').all()
+
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "network/index.html", {
+        'profileUser': user,
+        'page_obj': page_obj,
+        'postlist': "profile"
+    })
+
 
 
 def login_view(request):

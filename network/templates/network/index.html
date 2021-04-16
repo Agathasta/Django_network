@@ -1,20 +1,43 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-<h1>ALL POSTS</h1>
 
-{% if user.is_authenticated %}
-<form id="postform" method="post">
-    {% csrf_token %}
-    {{ form.post }}
-    <input type="submit" value="go">
-</form>
+<!-- Three different headings for All Posts, Profile Posts and Following Posts -->
+
+<!-- ALL POSTS -->
+{% if postlist == "all" %}
+<section>
+    <h2>ALL POSTS</h2>
+
+    {% if user.is_authenticated %}
+    <form id="postform" method="post">
+        {% csrf_token %}
+        {{ form.post }}
+        <input type="submit" value="go">
+    </form>
+    {% endif %}
+</section>
 {% endif %}
 
+<!-- PROFILE PAGE -->
+{% if postlist == "profile" %}
+<section>
+    <h2>{{ profileUser.username }}'s page</h2>
+</section>
+{% endif %}
+
+<!-- FOLLOWOD POSTS -->
+{% if postlist == "following" %}
+<section></section>
+{% endif %}
+
+<!-- List of posts filtered (All, Profile or Following) -->
 <section id="postlist" class="posts">
     {% for post in page_obj %}
     <article class="post">
-        <div class="post-user">{{ post.user.username }}</div>
+        <a href="{% url 'profile' post.user.username %}">
+            <div class="post-user">{{ post.user.username }}</div>
+        </a>
         <div class="post-time">{{ post.timestamp }}</div>
         <div class="post-message">{{ post.post }}</div>
         <div class="post-likes"><span class="far fa-heart"></span>{{ post.liked_by.count }}</div>
