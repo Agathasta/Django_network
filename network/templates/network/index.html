@@ -4,9 +4,10 @@
 
 <!-- Three different headings for All Posts, Profile Posts and Following Posts -->
 
-<!-- ALL POSTS -->
-{% if postlist == "all" %}
-<section>
+<!-- 1. ALL POSTS -->
+{% if post_list_type == "all" %}
+
+<section id="all-view">
     <h2>ALL POSTS</h2>
 
     {% if user.is_authenticated %}
@@ -17,35 +18,56 @@
     </form>
     {% endif %}
 </section>
+
 {% endif %}
 
-<!-- PROFILE PAGE -->
-{% if postlist == "profile" %}
-<section>
-    <h2>{{ profileUser.username }}'s page</h2>
+<!-- 2. PROFILE PAGE -->
+{% if post_list_type == "profile" %}
+
+<section id="profile-view">
+    <h2>{{ writer.username }}'s page</h2>
+    
+    <p>Followers: <span id="followers">{{ writer.follower.count }}</span></p>
+    <p>Following: <span id="following">{{ writer.following.count }}</span></p>
+    
+    {% if writer != user %}
+        {% if message == "unfollow" %}
+        {% csrf_token %}
+        <button id="btn-follow">Unfollow</button>
+        {% else %}
+        {% csrf_token %}
+        <button id="btn-follow">Follow</button>
+        {% endif %}
+    {% endif %}
 </section>
+
 {% endif %}
 
-<!-- FOLLOWOD POSTS -->
+<!-- 3. FOLLOWED POSTS -->
 {% if postlist == "following" %}
-<section></section>
+
+<section id="following-view"></section>
+
 {% endif %}
 
 <!-- List of posts filtered (All, Profile or Following) -->
 <section id="postlist" class="posts">
+
     {% for post in page_obj %}
+
     <article class="post">
-        <a href="{% url 'profile' post.user.username %}">
-            <div class="post-user">{{ post.user.username }}</div>
-        </a>
+        <a href="{% url 'profile' post.writer.username %}" class="post-writer">{{ post.writer.username }}</a>
         <div class="post-time">{{ post.timestamp }}</div>
         <div class="post-message">{{ post.post }}</div>
-        <div class="post-likes"><span class="far fa-heart"></span>{{ post.liked_by.count }}</div>
+        <div class="post-likes"><span class="far fa-heart"></span>{{ post.likes }}</div>
     </article>
+
     {% endfor %}
+
 </section>
 
 <nav class="pages">
+
     {% if page_obj.has_previous %}
     <a href="?page=1" class="page page-general">&laquo; first</a>
     <a href="?page={{ page_obj.previous_page_number }}" class="page page-general">{{ page_obj.previous_page_number}}</a>
@@ -61,8 +83,12 @@
     {% else %}
     <span aria-hidden="true" class="page page-inactive">last &raquo;</span>
     {% endif %}
+
 </nav>
 
+<!-- Not sure about this, but I need a way to have the user and the writer on my external JS -->
+<script>
+    const writer = '{{ writer }}';
+    const user = '{{ user }}';
+</script>
 {% endblock %}
-
-<!-- https://www.pluralsight.com/guides/work-with-ajax-django -->

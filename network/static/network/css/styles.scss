@@ -35,12 +35,12 @@ a {
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-areas:
-  "user time"
+  "writer time"
   "post post"
   "likes . "
 }
-.post-user {
-  grid-area: user;
+.post-writer {
+  grid-area: writer;
   font-weight: bold;
 }
 .post-time {

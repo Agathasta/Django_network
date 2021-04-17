@@ -13,18 +13,19 @@ class User(AbstractUser):
             "followers": [self.follower.username for self.follower in self.follower.all()]
         }
 
+
 class Post(models.Model):
+    writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     post = models.CharField(max_length=140)
     timestamp = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
-    liked_by = models.ManyToManyField(User, blank=True, related_name='liked_posts')
+    likes = models.IntegerField(blank=True, default=0)
 
     def serialize(self):
         return {
             "id": self.id,
             "post": self.post,
-            "user": self.user.username,
+            "writer": self.writer.username,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
-            "liked_by": [user.username for user in self.liked_by.all()],
-            "liked_count": self.liked_by.count()
+            "likes": self.likes
         }
+

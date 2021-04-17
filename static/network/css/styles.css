@@ -20,10 +20,10 @@ a {
   padding: 1rem;
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-template-areas: "user time" "post post" "likes . "; }
+  grid-template-areas: "writer time" "post post" "likes . "; }
 
-.post-user {
-  grid-area: user;
+.post-writer {
+  grid-area: writer;
   font-weight: bold; }
 
 .post-time {

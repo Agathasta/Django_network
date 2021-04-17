@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post
 from .forms import PostForm
@@ -17,7 +17,7 @@ def index(request):
         if form.is_valid():
             newPost = Post()
             newPost.post = form.cleaned_data['post']
-            newPost.user = request.user
+            newPost.writer = request.user
             newPost.save()
             return JsonResponse(newPost.serialize(), safe=False)
         else:
@@ -34,24 +34,59 @@ def index(request):
         return render(request, "network/index.html", {
             'form': PostForm(),
             'page_obj': page_obj,
-            'postlist': "all"
+            'post_list_type': "all"
         })
 
-def profile(request, user):
-    user = User.objects.filter(username=user).first()
-    posts = user.posts.order_by('-timestamp').all()
+        
+def profile(request, writer_username):
 
-    paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    # Query for requested writer
+    try:
+        writer = User.objects.get(username=writer_username)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "Writer not found."}, status=404)
+    
+    if request.method == "GET":
+        
+        # Change text in Follow button
+        if writer.follower.filter(pk=request.user.pk).exists():
+            message = 'unfollow'
+        else:
+            message = 'follow'
 
-    return render(request, "network/index.html", {
-        'profileUser': user,
-        'page_obj': page_obj,
-        'postlist': "profile"
-    })
+        # Get all posts
+        posts = writer.posts.order_by('-timestamp').all()
 
+        paginator = Paginator(posts, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
 
+        return render(request, "network/index.html", {
+            'user': request.user,
+            'writer': writer,
+            'page_obj': page_obj,
+            'message': message,
+            'post_list_type': "profile"
+        })
+
+    elif request.method == "PATCH":
+        if writer.follower.filter(pk=request.user.pk).exists():
+            writer.follower.remove(request.user)
+            message = 'follow'
+
+        else:
+            writer.follower.add(request.user)
+            message = 'unfollow' 
+
+        # To be able to send them as JSON. It turns out it is  quite unnecesary, since I only need 
+        # the total of followers in the DOM, not their names.
+        followers = list(writer.follower.values())
+        return JsonResponse({'followers': followers, 'message': message}, safe=False)
+
+    # Profile must be via GET or PATCH
+    else:
+        return JsonResponse({"error": "GET or PATCH request required."}, status=400)
+        
 
 def login_view(request):
     if request.method == "POST":
