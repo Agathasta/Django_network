@@ -107,6 +107,30 @@ def following(request):
         'post_list_type': "following",
     })
 
+
+def likes(request, post_id):
+
+    if request.user.is_authenticated:
+        if request.method == 'PATCH':
+            post = Post.objects.get(id=post_id)
+
+            if post.writer != request.user:
+
+                if post.liked_by.filter(pk=request.user.pk).exists():
+                    post.liked_by.remove(request.user)
+                else:
+                    post.liked_by.add(request.user)
+                return JsonResponse(post.serialize())
+
+            else:
+                return JsonResponse({'message': 'That is your post'})
+            
+        else:
+            return JsonResponse({"error": "PATCH request required."}, status=400)
+    else:
+        return JsonResponse({'message': 'Log-in'})
+
+
 def login_view(request):
     if request.method == "POST":
 

@@ -1,31 +1,44 @@
 document.addEventListener('DOMContentLoaded', () => {
-  if (document.querySelector('#all-view')) {
+
+  document.querySelectorAll('.btn-like').forEach(btn => likePost(btn))
+ 
+
+  if (document.querySelector('#postform')) {
     document.querySelector('#postform').onsubmit = () => sendForm();
   }
+
   else if (document.querySelector('#profile-view') && writer != user) {
     document.querySelector('#btn-follow').onclick = () => followUser();
   }
 })
 
-function followUser() {
-  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-  fetch(`/profile/${writer}`, {
-    method: 'PATCH',
-    headers: { 'X-CSRFToken': csrftoken }
-  })
-    .then(response => response.json())
-    .then(data => {
+function likePost(btn) {
 
-      document.querySelector('#followers').innerHTML = data.followers.length;
+  btn.addEventListener('click', () => {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-      if (data.message == 'unfollow') {
-        document.querySelector('#btn-follow').innerHTML = 'Unfollow';
-      }
-      else {
-        document.querySelector('#btn-follow').innerHTML = 'Follow';
-      }
+    const post_id = btn.dataset.value;
+
+    fetch(`/likes/${post_id}`, {
+      method: 'PATCH',
+      headers: { 'X-CSRFToken': csrftoken }
     })
+      .then(response => response.json())
+      .then(data => {
+        if(data.message) {
+          document.querySelector('#message').innerHTML = data.message;
+        }
+        else {
+          document.querySelector(`#likes-count-${post_id}`).innerHTML = data.likes;
+          document.querySelector('#message').innerHTML = '';
+        }
+      })
+      .catch(error => {
+        console.log('Error: ', error);
+      });
+  })
+
 }
 
 
@@ -89,4 +102,26 @@ function createPost(data) {
   const icon = document.createElement('span');
   icon.classList.add('far', 'fa-heart');
   document.querySelector('.post-likes').prepend(icon);
+}
+
+
+function followUser() {
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  fetch(`/profile/${writer}`, {
+    method: 'PATCH',
+    headers: { 'X-CSRFToken': csrftoken }
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      document.querySelector('#followers').innerHTML = data.followers.length;
+
+      if (data.message == 'unfollow') {
+        document.querySelector('#btn-follow').innerHTML = 'Unfollow';
+      }
+      else {
+        document.querySelector('#btn-follow').innerHTML = 'Follow';
+      }
+    })
 }

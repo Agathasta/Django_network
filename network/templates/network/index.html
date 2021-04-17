@@ -2,6 +2,8 @@
 
 {% block body %}
 
+<div id="message"></div>
+
 <!-- Three different headings for All Posts, Profile Posts and Following Posts -->
 
 <!-- 1. ALL POSTS -->
@@ -65,7 +67,13 @@
         <a href="{% url 'profile' post.writer.username %}" class="post-writer">{{ post.writer.username }}</a>
         <div class="post-time">{{ post.timestamp }}</div>
         <div class="post-message">{{ post.post }}</div>
-        <div class="post-likes"><span class="far fa-heart"></span>{{ post.likes }}</div>
+        <div class="post-likes">
+            {% csrf_token %}
+            <button class="btn-like" data-value="{{ post.id }}">
+                <i class="far fa-heart"></i>
+            </button>
+            <span id="likes-count-{{ post.id }}">{{ post.liked_by.count }}</span>
+        </div>
     </article>
 
     {% endfor %}
