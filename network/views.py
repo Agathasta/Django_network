@@ -1,16 +1,30 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post
 from .forms import PostForm
 
 def index(request):
+    # Display all posts
+    posts = Post.objects.order_by('-timestamp').all()
+    
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
+    return render(request, "network/index.html", {
+        'form': PostForm(),
+        'page_obj': page_obj,
+        'post_list_type': "all"
+    })
+
+
+def post(request):
     # Create a new post
     if request.method == 'POST':
         form = PostForm(request.POST)
@@ -22,39 +36,28 @@ def index(request):
             return JsonResponse(newPost.serialize(), safe=False)
         else:
             return JsonResponse({"error": form.errors}, status=400)
-
-    # Display all posts
     else:
-        posts = Post.objects.order_by('-timestamp').all()
-        
-        paginator = Paginator(posts, 10)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
+        # Create post must be via POST
+        return JsonResponse({"error": "POST request required."}, status=400)
 
-        return render(request, "network/index.html", {
-            'form': PostForm(),
-            'page_obj': page_obj,
-            'post_list_type': "all"
-        })
 
-        
 def profile(request, writer_username):
-
     # Query for requested writer
     try:
         writer = User.objects.get(username=writer_username)
     except User.DoesNotExist:
         return JsonResponse({"error": "Writer not found."}, status=404)
     
+    # Display profile posts
     if request.method == "GET":
         
         # Change text in Follow button
         if writer.follower.filter(pk=request.user.pk).exists():
-            message = 'unfollow'
+            follow_btn = 'unfollow'
         else:
-            message = 'follow'
+            follow_btn = 'follow'
 
-        # Get all posts
+        # Get all posts by the writer
         posts = writer.posts.order_by('-timestamp').all()
 
         paginator = Paginator(posts, 10)
@@ -65,7 +68,7 @@ def profile(request, writer_username):
             'user': request.user,
             'writer': writer,
             'page_obj': page_obj,
-            'message': message,
+            'follow_btn': follow_btn,
             'post_list_type': "profile"
         })
 
@@ -73,7 +76,6 @@ def profile(request, writer_username):
         if writer.follower.filter(pk=request.user.pk).exists():
             writer.follower.remove(request.user)
             message = 'follow'
-
         else:
             writer.follower.add(request.user)
             message = 'unfollow' 
@@ -86,7 +88,24 @@ def profile(request, writer_username):
     # Profile must be via GET or PATCH
     else:
         return JsonResponse({"error": "GET or PATCH request required."}, status=400)
-        
+
+
+@login_required(login_url='/login')
+def following(request):
+
+    user = request.user
+    following = user.following.all()
+    posts = Post.objects.filter(writer__in=following).order_by('-timestamp')
+
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "network/index.html", {
+        'page_obj': page_obj,
+        'following': following,
+        'post_list_type': "following",
+    })
 
 def login_view(request):
     if request.method == "POST":

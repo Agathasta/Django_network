@@ -14,18 +14,18 @@ function followUser() {
     method: 'PATCH',
     headers: { 'X-CSRFToken': csrftoken }
   })
-  .then(response => response.json())
-  .then(data => {
+    .then(response => response.json())
+    .then(data => {
 
-    document.querySelector('#followers').innerHTML = data.followers.length;
+      document.querySelector('#followers').innerHTML = data.followers.length;
 
-    if (data.message == 'unfollow') {
-      document.querySelector('#btn-follow').innerHTML = 'Unfollow';
-    }
-    else {
-      document.querySelector('#btn-follow').innerHTML = 'Follow';
-    }
-  })
+      if (data.message == 'unfollow') {
+        document.querySelector('#btn-follow').innerHTML = 'Unfollow';
+      }
+      else {
+        document.querySelector('#btn-follow').innerHTML = 'Follow';
+      }
+    })
 }
 
 
@@ -38,7 +38,7 @@ function sendForm() {
   formData.append('post', post);
 
   // Send the FormData
-  fetch('', {
+  fetch('/post', {
     method: 'POST',
     headers: { 'X-CSRFToken': csrftoken },
     body: formData
@@ -57,9 +57,9 @@ function sendForm() {
 }
 
 function createPost(data) {
-  
+
   let fragment = document.createDocumentFragment();
-  
+
   // Create username with link to profile
   const a = document.createElement('a');
   a.href = `/profile/${data.writer}`

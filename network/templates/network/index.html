@@ -26,27 +26,33 @@
 
 <section id="profile-view">
     <h2>{{ writer.username }}'s page</h2>
-    
+
     <p>Followers: <span id="followers">{{ writer.follower.count }}</span></p>
     <p>Following: <span id="following">{{ writer.following.count }}</span></p>
-    
-    {% if writer != user %}
-        {% if message == "unfollow" %}
-        {% csrf_token %}
-        <button id="btn-follow">Unfollow</button>
-        {% else %}
-        {% csrf_token %}
-        <button id="btn-follow">Follow</button>
-        {% endif %}
+
+    {% if user.is_authenticated and writer != user %}
+    {% csrf_token %}
+    {% if follow_btn == "unfollow" %}
+    <button id="btn-follow">Unfollow</button>
+    {% else %}
+    <button id="btn-follow">Follow</button>
+    {% endif %}
     {% endif %}
 </section>
 
 {% endif %}
 
 <!-- 3. FOLLOWED POSTS -->
-{% if postlist == "following" %}
+{% if post_list_type == "following" %}
 
-<section id="following-view"></section>
+<section id="following-view">
+
+    <h2>{{ user }} is following
+        {% for follower in following %}
+        {{ follower.username }},
+        {% endfor %}
+    </h2>
+</section>
 
 {% endif %}
 
