@@ -21,7 +21,7 @@
         <ul>
             {% if user.is_authenticated %}
             <li>
-                <a href="#"><strong>{{ user.username }}</strong></a>
+                <a href="{% url 'profile' user.username %}"><strong>{{ user.username }}</strong></a>
             </li>
             {% endif %}
             <li>

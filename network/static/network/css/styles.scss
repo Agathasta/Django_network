@@ -35,9 +35,9 @@ a {
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-areas:
-  "writer time"
-  "post post"
-  "likes . "
+    "writer time"
+    "post post"
+    "likes . ";
 }
 .post-writer {
   grid-area: writer;
@@ -96,8 +96,8 @@ a {
   color: #6c757d;
 }
 
-
-.post-likes {
+.btn-like {
   border: none;
   background: #fff;
+  cursor: pointer;
 }

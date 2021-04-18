@@ -6,6 +6,8 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
+import json
+
 from .models import User, Post
 from .forms import PostForm
 
@@ -120,15 +122,34 @@ def likes(request, post_id):
                     post.liked_by.remove(request.user)
                 else:
                     post.liked_by.add(request.user)
+                
                 return JsonResponse(post.serialize())
 
             else:
-                return JsonResponse({'message': 'That is your post'})
+                return JsonResponse({'message': 'You cannot like your own post'})
             
         else:
             return JsonResponse({"error": "PATCH request required."}, status=400)
     else:
         return JsonResponse({'message': 'Log-in'})
+
+
+def edit(request, post_id):
+
+    if request.method == 'PATCH':
+        post = Post.objects.get(id=post_id)
+        data = json.loads(request.body)
+
+        if post.writer == request.user:
+            post.post = data['post']
+            post.save()
+            return HttpResponse(status=204)
+
+        else:
+            return JsonResponse({'message': 'You can only edit your own posts'})
+        
+    else:
+        return JsonResponse({"error": "PATCH request required."}, status=400)
 
 
 def login_view(request):

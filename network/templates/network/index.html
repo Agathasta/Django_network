@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<div id="message"></div>
+
 
 <!-- Three different headings for All Posts, Profile Posts and Following Posts -->
 
@@ -64,16 +64,29 @@
     {% for post in page_obj %}
 
     <article class="post">
-        <a href="{% url 'profile' post.writer.username %}" class="post-writer">{{ post.writer.username }}</a>
+        <a href="{% url 'profile' post.writer.username %}" class="post-writer">
+            {{ post.writer.username }}
+        </a>
         <div class="post-time">{{ post.timestamp }}</div>
-        <div class="post-message">{{ post.post }}</div>
+        <div id="post-message-{{ post.id }}" class="post-message">{{ post.post }}</div>
         <div class="post-likes">
             {% csrf_token %}
             <button class="btn-like" data-value="{{ post.id }}">
-                <i class="far fa-heart"></i>
+                {% if user in post.liked_by.all %}
+                <i id="heart-{{ post.id }}" class="fas fa-heart"></i>
+                {% else %}
+                <i id="heart-{{ post.id }}" class="far fa-heart"></i>
+                {% endif %}
             </button>
             <span id="likes-count-{{ post.id }}">{{ post.liked_by.count }}</span>
+            <span id="message-{{ post.id }}" class="message"></span>
         </div>
+        {% if user == post.writer %}
+        <div class="post-edit">
+            {% csrf_token %}
+            <button class="btn-edit" data-value="{{ post.id }}">Edit</button>
+        </div>
+        {% endif %}
     </article>
 
     {% endfor %}

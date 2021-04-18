@@ -73,8 +73,9 @@ a {
 .page-inactive {
   color: #6c757d; }
 
-.post-likes {
+.btn-like {
   border: none;
-  background: #fff; }
+  background: #fff;
+  cursor: pointer; }
 
 /*# sourceMappingURL=styles.css.map */
