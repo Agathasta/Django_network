@@ -19,13 +19,7 @@ I decided to use only 2 models, User and Post, related through a ForeignKey.
 Followers/following can be logged in a recursive ManyToMany relationship in User. Symmetry needs to be set to False and blank to True.  
 **** The likes can be a ManyToMany relationship between User and Post, with blank set to True.  
 
-2. CSS
-I am not using Bootstrap.  
-I have copied the normalize.css to normalize (duh) the starting css.  
-Looking at OOCSS, SMACSS, ITCSS, ACSS and BEM. Ummm.  
-Decide to use SCSS: <https://engineertodeveloper.com/how-to-easily-use-sass-scss-with-django/>  
-
-3. ALL POSTS, ADD POST
+2. ALL POSTS, ADD POST
 First go: everything was done with Python and it worked fine
 Second go: implement JS for creating new posts and updating the post list asynchronously.  
 
@@ -34,15 +28,22 @@ Second go: implement JS for creating new posts and updating the post list asynch
     * I store the CSRF token in the session and not in a cookie, because getting that seemed overly complicated.  
 Third go: new view for the post request.  
 
-4. PAGINATION
+3. PAGINATION
 Copied the code from the Django documentation. To style it, I looked at Bootstrap's style and adapted it.
 
-5. PROFILE
+4. PROFILE
 The username link takes me to an url profile/username. The corresponding view filters the posts accordingly but renders the original index.html.  
 I follow/unfollow with a JS patch Fetch request. The response is an array of followers; I made a list of the values of the ManyToMany field to be able to send it back as JSON. Too complicated, counting them would have been sufficient.  
 
-6. FOLLOWING
+5. FOLLOWING
 Implemented like profile, changing the query. Added the @login_required decorator
 
-7. LIKES
+6. LIKES
 Implemented it like follow/unfollow but it was somehow easier and the result is cleaner. Maybe because user.following is a recursive ManyTo Many?
+
+7. CSS
+I am not using Bootstrap.  
+I have copied the normalize.css to normalize (duh) the starting css.  
+Looking at OOCSS, SMACSS, ITCSS, ACSS and BEM. Ummm.  
+Decide to use SCSS: <https://engineertodeveloper.com/how-to-easily-use-sass-scss-with-django/> 
+    * I generate the colors of the 'avatars' in django to make them persistent. They are a random hex color + CC to give them an alpha value of 80% (got rid of that again). VSCode didn't like my inline background style to be django handlebars, I had to turn that off. Not sure if it is very correct, although it does work.

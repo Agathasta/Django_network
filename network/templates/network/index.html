@@ -1,74 +1,84 @@
-{% extends "network/layout.html" %}
-
-{% block body %}
-
-
+{% extends "network/layout.html" %} {% block body %}
 
 <!-- Three different headings for All Posts, Profile Posts and Following Posts -->
 
 <!-- 1. ALL POSTS -->
 {% if post_list_type == "all" %}
-
 <section id="all-view">
-    <h2>ALL POSTS</h2>
-
     {% if user.is_authenticated %}
     <form id="postform" method="post">
-        {% csrf_token %}
-        {{ form.post }}
-        <input type="submit" value="go">
+        {% csrf_token %} {{form.post}}
+        <input type="submit" value="go" class="button" />
     </form>
     {% endif %}
-</section>
 
+    <h2>What people are saying</h2>
+</section>
 {% endif %}
 
 <!-- 2. PROFILE PAGE -->
 {% if post_list_type == "profile" %}
-
 <section id="profile-view">
-    <h2>{{ writer.username }}'s page</h2>
-
-    <p>Followers: <span id="followers">{{ writer.follower.count }}</span></p>
-    <p>Following: <span id="following">{{ writer.following.count }}</span></p>
-
-    {% if user.is_authenticated and writer != user %}
-    {% csrf_token %}
-    {% if follow_btn == "unfollow" %}
-    <button id="btn-follow">Unfollow</button>
-    {% else %}
-    <button id="btn-follow">Follow</button>
-    {% endif %}
-    {% endif %}
+    <h2>What
+        {% if writer == user %}
+        you are
+        {% else %}
+        {{ writer }} is 
+        {% endif %}
+        telling the world
+    </h2>
+    <div class="follow">
+        <div class="follow-info">
+            <p>Following: <span id="following">{{ writer.following.count }}</span></p>
+            <p>Followers: <span id="followers">{{ writer.follower.count }}</span></p>
+        </div>
+        {% if user.is_authenticated and writer != user %} 
+            {% csrf_token %} 
+            {% if follow_btn == "unfollow" %}
+            <button id="btn-follow" class="button">Unfollow</button>
+            {% else %}
+            <button id="btn-follow" class="button">Follow</button>
+            {% endif %} 
+        {% endif %}
+    </div>
 </section>
-
 {% endif %}
 
 <!-- 3. FOLLOWED POSTS -->
 {% if post_list_type == "following" %}
-
 <section id="following-view">
-
-    <h2>{{ user }} is following
-        {% for follower in following %}
-        {{ follower.username }},
+    <h2>
+        What  
+        {% for follower in following %} 
+            {% if follower == following.last %} 
+            and <span class="blue">{{follower.username}}</span> 
+            {% elif follower == following.first %}
+            <span class="blue">{{follower.username}}</span>
+            {% else %}
+            , <span class="blue">{{follower.username}}</span> 
+            {% endif %}
         {% endfor %}
+        are saying
     </h2>
 </section>
-
 {% endif %}
 
 <!-- List of posts filtered (All, Profile or Following) -->
-<section id="postlist" class="posts">
-
+<section id="postlist">
     {% for post in page_obj %}
-
     <article class="post">
-        <a href="{% url 'profile' post.writer.username %}" class="post-writer">
-            {{ post.writer.username }}
-        </a>
+        <div class="post-writer">
+            <span
+                class="avatar"
+                style="background-color: {{ post.writer.color }}">
+                {{ post.writer.username.0|upper }}
+            </span>
+            <a href="{% url 'profile' post.writer.username %}">
+                {{ post.writer.username }}
+            </a>
+        </div>
         <div class="post-time">{{ post.timestamp }}</div>
-        <div id="post-message-{{ post.id }}" class="post-message">{{ post.post }}</div>
+        <div class="post-message" id="post-message-{{ post.id }}">{{ post.post }}</div>
         <div class="post-likes">
             {% csrf_token %}
             <button class="btn-like" data-value="{{ post.id }}">
@@ -78,7 +88,9 @@
                 <i id="heart-{{ post.id }}" class="far fa-heart"></i>
                 {% endif %}
             </button>
-            <span id="likes-count-{{ post.id }}">{{ post.liked_by.count }}</span>
+            <span id="likes-count-{{ post.id }}">
+				{{ post.liked_by.count }}
+			</span>
             <span id="message-{{ post.id }}" class="message"></span>
         </div>
         {% if user == post.writer %}
@@ -88,13 +100,10 @@
         </div>
         {% endif %}
     </article>
-
     {% endfor %}
-
 </section>
 
 <nav class="pages">
-
     {% if page_obj.has_previous %}
     <a href="?page=1" class="page page-general">&laquo; first</a>
     <a href="?page={{ page_obj.previous_page_number }}" class="page page-general">{{ page_obj.previous_page_number}}</a>
@@ -110,7 +119,6 @@
     {% else %}
     <span aria-hidden="true" class="page page-inactive">last &raquo;</span>
     {% endif %}
-
 </nav>
 
 <!-- Not sure about this, but I need a way to have the user and the writer on my external JS -->

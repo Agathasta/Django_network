@@ -1,57 +1,60 @@
-{% load static %}
-{% load sass_tags %}
+{% load static %} {% load sass_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
 
     <title>{% block title %}Social Network{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link href="{% static 'network/css/normalize.css' %}" rel="stylesheet">
-    <link href="{% sass_src 'network/css/styles.scss' %}" rel="stylesheet">
-</head>
+    <link href="{% static 'network/css/normalize.css' %}" rel="stylesheet" />
 
-<body>
+    <link href="{% sass_src 'network/css/styles.scss' %}" rel="stylesheet" />
 
-    <nav class="body-nav">
-        <a href="#">Network</a>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <nav class="nav">
+      <div class="nav-btns">
         <ul>
-            {% if user.is_authenticated %}
-            <li>
-                <a href="{% url 'profile' user.username %}"><strong>{{ user.username }}</strong></a>
-            </li>
-            {% endif %}
-            <li>
-                <a href="{% url 'index' %}">All Posts</a>
-            </li>
-            {% if user.is_authenticated %}
-            <li>
-                <a href="{% url 'following' %}">Following</a>
-            </li>
-            <li class="nav-item">
-                <a href="{% url 'logout' %}">Log Out</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-                <a href="{% url 'login' %}">Log In</a>
-            </li>
-            <li class="nav-item">
-                <a href="{% url 'register' %}">Register</a>
-            </li>
-            {% endif %}
+          <li><a href="{% url 'index' %}" class="blue">network</a></li>
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'profile' user.username %}">Profile</a></li>
+          <li><a href="{% url 'following' %}">Feed</a></li>
+          {% endif %}
         </ul>
+      </div>
+      <div class="nav-copyright">&#169;AGS</div>
     </nav>
 
-    <main class="body-content">
-        {% block body %}
-        {% endblock %}
+    <main class="content">
+      {% if user.is_authenticated %}
+      <div class="greeting">
+        <a href="{% url 'profile' user.username %}">Hi, {{ user.username }}</a>
+        <a href="{% url 'logout' %}">Log Out</a>
+      </div>
+      {% endif %}
+      
+      {% block body %} {% endblock %}
     </main>
 
-    <script src="https://kit.fontawesome.com/694317dcf2.js" crossorigin="anonymous"></script>
-    <script src="{% static 'network/js/script.js' %}"></script>
-</body>
+    {% if not user.is_authenticated %}
+    <section class="footer-login">
+      <a href="{% url 'login' %}" class="footer-btns">Log In</a>
+      <a href="{% url 'register' %}" class="footer-btns">Register</a>
+    </section>
+    {% endif %}
 
+    <script
+      src="https://kit.fontawesome.com/694317dcf2.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="{% static 'network/js/script.js' %}"></script>
+  </body>
 </html>

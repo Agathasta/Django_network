@@ -1,25 +1,30 @@
-$hover-background: #e9ecef;
-$border: #dee2e6;
-$text-color-main: green;
+$background-dark: #ebecec;
+$background-light: #fff;
+$button-hover: #1cabd36e;
+$color-main: #158aaa;
+$text-light: #6a727a;
+$text-dark: #2c3136;
 
-// GENERAL LAYOUT
-body {
-  display: grid;
-  grid-template-columns: minmax(190px, 20%) 1fr;
-}
-
-.body-nav {
-  grid-column: 1/2;
-  background-color: $border;
-}
-
-.body-content {
-  grid-column: 2/2;
+%button {
+  border: none;
+  font-size: 1.2em;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
 }
 
 // GENERAL STYLES
-h1 {
-  color: $text-color-main;
+html {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  background-color: $background-dark;
+  color: $text-dark;
+  height: 100vh;
+}
+
+h2 {
+  margin-left: 4.2rem;
+  margin-top: 2rem;
 }
 
 a {
@@ -27,52 +32,262 @@ a {
   color: inherit;
 }
 
-// NAVIGATION
+ul {
+  padding: 0;
+}
+
+li {
+  list-style: none;
+  margin-top: 1em;
+}
+
+p {
+  padding: 0 1em;
+  margin: 0;
+}
+
+.button {
+  @extend %button;
+  background-color: $color-main;
+  color: $background-dark;
+  width: 8rem;
+
+  &:hover {
+    background-color: $button-hover;
+    color: $color-main;
+  }
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+  flex: 1;
+  height: 2.2em;
+  margin: 0 2rem;
+  padding-left: 1em;
+  border-radius: 20px;
+  border: 1px solid $background-light;
+  background-color: $background-light;
+
+  &:focus {
+    outline: none;
+    border: 1px solid $color-main;
+  }
+}
+
+.blue {
+  color: $color-main;
+  font-weight: 400;
+}
+
+// GENERAL LAYOUT
+body {
+  width: 100vw;
+  display: grid;
+  grid-template-columns: minmax(190px, 22%) 1fr;
+  grid-template-areas:
+    "nav list"
+    "footer footer"
+}
+
+// NAV
+.nav {
+  grid-area: nav;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  padding: 0 2em;
+  box-shadow: 5px 0 10px#d6d6d6;
+}
+
+.nav-btns li:first-child {
+  margin-top: 2em;
+}
+
+.nav-btns li {
+  @extend %button;
+  margin-top: 1em;
+
+  &:hover {
+    color: #000;
+    background-color: $button-hover;
+    width: 8rem;
+  }
+}
+
+.nav-copyright {
+  font-size: 0.8em;
+  border-top: 1px solid $text-light;
+  padding: 1em 0;
+}
+
+.greeting {
+  display: flex;
+  justify-content: end;
+  font-size: 1rem;
+  margin: 1em 2em;
+
+}
+.greeting a:first-of-type {
+  margin-right: 1em;
+  font-weight: 400;
+}
+
+.greeting a:hover {
+    color: $color-main;
+    cursor: pointer;
+}
+
+// FOOTER
+.footer-login {
+  grid-area: footer;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  padding: 1.5em;
+  background-color: $color-main;
+  display: flex;
+  justify-content: end;
+}
+
+.footer-btns {
+  @extend %button;
+  border: 1px solid $background-dark;
+  color: $background-dark;
+
+  &:hover {
+    background-color: $text-dark;
+    border: 1px solid $text-dark;
+    color: $background-dark;
+  }
+}
+.footer-btns:first-child {
+  margin-right: 1em;
+}
 
 // POST LIST
+.content {
+  grid-area: list;
+}
+
+#postlist {
+  padding-left: 2em;
+  margin-right: 2em;
+}
+
 .post {
-  padding: 1rem;
+  background-color: $background-light;
+  border-radius: 0 10px 10px 10px;
+  padding: 1em 2em;
+  margin: 1em 0;
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 3fr 1fr;
   grid-template-areas:
     "writer time"
     "post post"
-    "likes . ";
+    "likes edit ";
 }
 .post-writer {
   grid-area: writer;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
 }
+
+.post-writer a {
+  @extend %button;
+  color: #000;
+  background-color: $background-dark;
+  width: 8rem;
+
+  &:hover {
+    color: #000;
+    background-color: $button-hover;
+    width: 8rem;
+  }
+}
+
+.avatar {
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1em;
+  color: $background-dark;
+}
+
 .post-time {
   grid-area: time;
-  font-size: small;
+  color: slategrey;
+  font-size: 0.9rem;
+  text-align: right;
 }
-.post-message {
+.post-message, .editable {
   grid-area: post;
+  margin: 1em 0;
+  padding: 0.5em;
+  border-radius: 10px;
 }
+
+.editable:focus {
+  border: 1px solid $color-main;
+  outline: none;
+}
+
 .post-likes {
   grid-area: likes;
-  margin-bottom: 1rem;
   font-size: small;
+}
+
+.message {
+  color: darkred;
+  margin-left: 1em;
+}
+
+.btn-like {
+  border: none;
+  background: transparent;
+  color: $text-light;
+  cursor: pointer;
+  padding-right: 1em;
+
+  &:hover {
+    color: $color-main;
+  }
+}
+
+.post-edit {
+  grid-area: edit;
+  justify-self: end;
+}
+
+.btn-edit {
+  @extend %button;
+  font-size: 1em;
+
+  &:hover {
+    background-color: $button-hover;
+  }
 }
 
 // PAGINATION
 .pages {
+  margin-bottom: 2em;
   display: flex;
   justify-content: center;
 }
 .pages a:hover {
   color: black;
-  background-color: $hover-background;
-  border-color: $border;
+  background-color: $button-hover;
 }
 
 .page {
-  color: $text-color-main;
+  color: $color-main;
   text-decoration: none;
-  border: 1px solid $border;
   padding: 0.375rem 0.75rem;
-  // transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 .page:not(:first-child) {
   margin-left: -1px;
@@ -89,15 +304,58 @@ a {
 .page-current {
   z-index: 1;
   color: #fff;
-  background-color: $text-color-main;
-  border-color: $text-color-main;
+  background-color: $color-main;
+  border-color: $color-main;
 }
 .page-inactive {
   color: #6c757d;
 }
 
-.btn-like {
-  border: none;
-  background: #fff;
-  cursor: pointer;
+// ALL VIEW
+
+#all-view {
+  margin: 2em 2em 2em 0;
+}
+
+#all-view form {
+  display: flex;
+}
+
+#id_post:required {
+  box-shadow:none;
+}
+
+#id_post {
+  flex: 1;
+}
+
+// PROFILE
+.follow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 3.2em;
+  margin-right: 2em;
+}
+
+.follow-info {
+  display: flex;
+}
+
+// LOGIN
+.login {
+  height: 78vh;
+  padding: 2em;
+
+  input, p {
+    margin: 0.5em 2em;
+  }
+
+  a {
+    color: $color-main;
+
+    &:hover {
+      color: $text-dark;
+    }
+  }
 }

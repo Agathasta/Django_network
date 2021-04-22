@@ -1,7 +1,7 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-
+<div class="login">
     <h2>Register</h2>
 
     {% if message %}
@@ -22,9 +22,9 @@
         <div>
             <input type="password" name="confirmation" placeholder="Confirm Password">
         </div>
-        <input type="submit" value="Register">
+        <input class="button" type="submit" value="Register">
     </form>
 
-    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
-
+    <p>Already have an account? <a href="{% url 'login' %}">Log In here.</a></p>
+</div>
 {% endblock %}

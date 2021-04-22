@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 import json
+import random
 
 from .models import User, Post
 from .forms import PostForm
@@ -193,6 +194,7 @@ def register(request):
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
+            user.color = '#%06X' % random.randint(0,256**3-1)
             user.save()
         except IntegrityError:
             return render(request, "network/register.html", {

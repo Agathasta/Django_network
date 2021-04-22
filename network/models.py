@@ -3,6 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
+    color = models.CharField(max_length=7, default='#000000')
     following = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='follower')
 
     def serialize(self):
@@ -25,8 +26,12 @@ class Post(models.Model):
             "id": self.id,
             "post": self.post,
             "writer": self.writer.username,
+            "color": self.writer.color,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
             "likes": self.liked_by.count(),
             "liked_by": [self.username for self in self.liked_by.all()]
         }
+
+    def __str__(self):
+        return f"{self.post} | {self.writer}"
 
