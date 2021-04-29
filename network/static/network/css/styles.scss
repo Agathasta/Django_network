@@ -85,7 +85,15 @@ body {
   grid-template-columns: minmax(190px, 22%) 1fr;
   grid-template-areas:
     "nav list"
-    "footer footer"
+    "footer footer";
+
+    @media(max-width: 700px) {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "nav"
+        "list"
+        "footer"
+    }
 }
 
 // NAV
@@ -99,6 +107,11 @@ body {
   height: 100vh;
   padding: 0 2em;
   box-shadow: 5px 0 10px#d6d6d6;
+
+  @media(max-width: 700px) {
+    height: auto;
+    background-color: $background-dark;
+  }
 }
 
 .nav-btns li:first-child {
@@ -120,6 +133,10 @@ body {
   font-size: 0.8em;
   border-top: 1px solid $text-light;
   padding: 1em 0;
+
+  @media(max-width: 700px) {
+    display: none;
+  }
 }
 
 .greeting {

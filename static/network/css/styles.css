@@ -60,7 +60,10 @@ body {
   display: grid;
   grid-template-columns: minmax(190px, 22%) 1fr;
   grid-template-areas: "nav list" "footer footer"; }
-
+  @media (max-width: 700px) {
+    body {
+      grid-template-columns: 1fr;
+      grid-template-areas: "nav" "list" "footer"; } }
 .nav {
   grid-area: nav;
   position: sticky;
@@ -71,7 +74,10 @@ body {
   height: 100vh;
   padding: 0 2em;
   box-shadow: 5px 0 10px #d6d6d6; }
-
+  @media (max-width: 700px) {
+    .nav {
+      height: auto;
+      background-color: #ebecec; } }
 .nav-btns li:first-child {
   margin-top: 2em; }
 
@@ -86,7 +92,9 @@ body {
   font-size: 0.8em;
   border-top: 1px solid #6a727a;
   padding: 1em 0; }
-
+  @media (max-width: 700px) {
+    .nav-copyright {
+      display: none; } }
 .greeting {
   display: flex;
   justify-content: end;

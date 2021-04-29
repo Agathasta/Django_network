@@ -7,7 +7,8 @@
 <section id="all-view">
     {% if user.is_authenticated %}
     <form id="postform" method="post">
-        {% csrf_token %} {{form.post}}
+        {% csrf_token %} 
+        {{form.post}}
         <input type="submit" value="go" class="button" />
     </form>
     {% endif %}
@@ -23,7 +24,7 @@
         {% if writer == user %}
         you are
         {% else %}
-        {{ writer }} is 
+        {{ writer }} is
         {% endif %}
         telling the world
     </h2>
@@ -32,13 +33,13 @@
             <p>Following: <span id="following">{{ writer.following.count }}</span></p>
             <p>Followers: <span id="followers">{{ writer.follower.count }}</span></p>
         </div>
-        {% if user.is_authenticated and writer != user %} 
-            {% csrf_token %} 
-            {% if follow_btn == "unfollow" %}
-            <button id="btn-follow" class="button">Unfollow</button>
-            {% else %}
-            <button id="btn-follow" class="button">Follow</button>
-            {% endif %} 
+        {% if user.is_authenticated and writer != user %}
+        {% csrf_token %}
+        {% if follow_btn == "unfollow" %}
+        <button id="btn-follow" class="button">Unfollow</button>
+        {% else %}
+        <button id="btn-follow" class="button">Follow</button>
+        {% endif %}
         {% endif %}
     </div>
 </section>
@@ -48,17 +49,18 @@
 {% if post_list_type == "following" %}
 <section id="following-view">
     <h2>
-        What  
-        {% for follower in following %} 
-            {% if follower == following.last %} 
-            and <span class="blue">{{follower.username}}</span> 
-            {% elif follower == following.first %}
-            <span class="blue">{{follower.username}}</span>
-            {% else %}
-            , <span class="blue">{{follower.username}}</span> 
-            {% endif %}
+        What
+        {% for follower in following %}
+        {% if follower == following.last and following.count > 1 %}
+        and <span class="blue">{{follower.username}}</span>
+        {% elif follower == following.first %}
+        <span class="blue">{{follower.username}}</span>
+        {% else %}
+        , <span class="blue">{{follower.username}}</span>
+        {% endif %}
         {% endfor %}
-        are saying
+        {% if following.count > 1 %} are {% else %} is {% endif %}
+        saying
     </h2>
 </section>
 {% endif %}
@@ -68,16 +70,20 @@
     {% for post in page_obj %}
     <article class="post">
         <div class="post-writer">
-            <span
-                class="avatar"
-                style="background-color: {{ post.writer.color }}">
+            <span class="avatar" style="background-color: {{ post.writer.color }}">
                 {{ post.writer.username.0|upper }}
             </span>
             <a href="{% url 'profile' post.writer.username %}">
                 {{ post.writer.username }}
             </a>
         </div>
-        <div class="post-time">{{ post.timestamp }}</div>
+        <div class="post-time">
+            {% if current_year > post.timestamp|date:"Y" %}
+            {{ post.timestamp|date:"F j, Y" }} &#8226; {{ post.timestamp|date:"H:i" }}
+            {% else %}
+            {{ post.timestamp|date:"F j" }} &#8226; {{ post.timestamp|date:"H:i" }}
+            {% endif %}
+        </div>
         <div class="post-message" id="post-message-{{ post.id }}">{{ post.post }}</div>
         <div class="post-likes">
             {% csrf_token %}
@@ -89,8 +95,8 @@
                 {% endif %}
             </button>
             <span id="likes-count-{{ post.id }}">
-				{{ post.liked_by.count }}
-			</span>
+                {{ post.liked_by.count }}
+            </span>
             <span id="message-{{ post.id }}" class="message"></span>
         </div>
         {% if user == post.writer %}
